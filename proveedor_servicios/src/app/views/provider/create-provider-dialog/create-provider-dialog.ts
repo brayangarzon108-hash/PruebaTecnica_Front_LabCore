@@ -87,7 +87,27 @@ export class CreateProviderDialogComponent {
       Name: ['', Validators.required],
       LastName: ['', Validators.required],
       Phone: [0],
-      BirthDate: ['', Validators.required],
+      BirthDate: [
+        '',
+        [
+          Validators.required,
+          (control: { value: any; }) => {
+            const birthDate = control.value;
+            if (!birthDate) return null;
+
+            const today = new Date();
+            const birth = new Date(birthDate);
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+              age--;
+            }
+
+            return age >= 0 && age <= 120 ? null : { ageInvalid: true };
+          },
+        ],
+      ],
       Email: [''],
       Enabled: [true],
       CityId: [null, Validators.required],
@@ -128,8 +148,8 @@ export class CreateProviderDialogComponent {
     if (this.providerForm.valid) {
       const provider: PatienstRequest = this.providerForm.value;
       if (this.data && this.data.dataInfo) {
-        provider.TypeDocument = this.data.dataInfo.typeDocument
-        provider.Document = this.data.dataInfo.document
+        provider.TypeDocument = this.data.dataInfo.typeDocument;
+        provider.Document = this.data.dataInfo.document;
       }
       this.customerService.upsertPatients(provider).subscribe({
         next: (response: ApiResponse<string>) => {

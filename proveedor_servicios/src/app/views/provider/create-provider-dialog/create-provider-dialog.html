@@ -1,8 +1,8 @@
-<h2 mat-dialog-title>{{!modeModal ? 'Crear Paciente' : 'Actualizar Paciente'}}</h2>
+<h2 mat-dialog-title>{{ !modeModal ? 'Crear Paciente' : 'Actualizar Paciente' }}</h2>
 <mat-dialog-content [formGroup]="providerForm" class="form-grid">
   <mat-form-field class="full-width">
     <mat-label>Tipo de Documento</mat-label>
-    <mat-select  formControlName="TypeDocument" >
+    <mat-select formControlName="TypeDocument">
       <mat-option *ngFor="let doc of documentTypes" [value]="doc.valueId">
         {{ doc.value }} - {{ doc.viewValue }}
       </mat-option>
@@ -34,9 +34,12 @@
     />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
+    <mat-error *ngIf="providerForm.get('BirthDate')?.hasError('ageInvalid')">
+      La edad debe estar entre 0 y 120 años
+    </mat-error>
   </mat-form-field>
 
-    <mat-form-field class="full-width">
+  <mat-form-field class="full-width">
     <mat-label>Ciudad de residencia</mat-label>
     <mat-select formControlName="CityId">
       <mat-option *ngFor="let city of cities" [value]="city.cityId">
@@ -50,7 +53,7 @@
     <input type="number" matInput formControlName="Phone" />
   </mat-form-field>
 
-   <mat-form-field class="full-width">
+  <mat-form-field class="full-width">
     <mat-label>Correo electrónico</mat-label>
     <input matInput formControlName="Email" />
   </mat-form-field>
