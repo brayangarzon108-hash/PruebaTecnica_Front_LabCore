@@ -1,0 +1,153 @@
+<mat-toolbar color="primary">
+  <span>Proveedores por Servicio</span>
+</mat-toolbar>
+
+<div class="dashboard-container">
+  <h2 class="dashboard-title">Dashboard de Indicadores</h2>
+
+  <!-- Clientes por País -->
+  <mat-card class="dashboard-card">
+    <mat-card-title>Clientes por País</mat-card-title>
+    <ngx-charts-pie-chart
+      [results]="clientsChartData"
+      [view]="view"
+      [legend]="showLegend"
+      [labels]="showLabels"
+      [doughnut]="false"
+    >
+    </ngx-charts-pie-chart>
+  </mat-card>
+
+  <!-- Servicios por País -->
+  <mat-card class="dashboard-card">
+    <mat-card-title>Servicios por País</mat-card-title>
+    <ngx-charts-bar-vertical
+      [results]="servicesChartData"
+      [view]="view"
+      [legend]="showLegend"
+      [showDataLabel]="true"
+      [xAxis]="true"
+      [yAxis]="true"
+    >
+    </ngx-charts-bar-vertical>
+  </mat-card>
+</div>
+
+<div style="margin: 20px">
+  <mat-card>
+    <mat-card-content>
+      <!-- Encabezado con título y buscador -->
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        "
+      >
+        <!-- Botón Crear Proveedor -->
+        <button mat-raised-button style="color: green" (click)="openCreateDialog()">
+          <mat-icon>add</mat-icon> Crear Proveedor
+        </button>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Buscador</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search" />
+          <button mat-icon-button matSuffix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <!-- Tabla -->
+      <div class="mat-elevation-z8">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          multiTemplateDataRows
+          class="full-width-table"
+        >
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+            <td mat-cell *matCellDef="let element">{{ element.providerId }}</td>
+          </ng-container>
+
+          <!-- NIT -->
+          <ng-container matColumnDef="nit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>NIT</th>
+            <td mat-cell *matCellDef="let element">{{ element.taxId }}</td>
+          </ng-container>
+
+          <!-- Nombre -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+          </ng-container>
+
+          <!-- Correo -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electrónico</th>
+            <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+          </ng-container>
+
+          <!-- Acciones -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-button (click)="openOrdersDialog(element)" style="color: blue">
+                VIEW SERVICES
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Expandir -->
+          <ng-container matColumnDef="expand">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element" class="expand-icon">
+              <button mat-icon-button (click)="toggleRow(element)">
+                <mat-icon>
+                  {{ expandedElement === element ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                </mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Fila normal -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Fila expandida (solo cuando toca el expandir) -->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+              <div class="expanded-content" *ngIf="expandedElement === row">
+                <h4>Campos Dinámicos</h4>
+                <ng-container *ngIf="row.customFields?.length > 0; else noFields">
+                  <ul>
+                    <li *ngFor="let field of row.customFields">
+                      <strong>{{ field.fieldName }}:</strong> {{ field.fieldValue }}
+                      <span *ngIf="!field.enabled" class="disabled">(Deshabilitado)</span>
+                    </li>
+                  </ul>
+                </ng-container>
+                <ng-template #noFields>
+                  <p>No hay campos dinámicos</p>
+                </ng-template>
+              </div>
+            </td>
+          </ng-container>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="detail-row"
+            [hidden]="expandedElement !== row"
+          ></tr>
+        </table>
+
+        <!-- Paginador -->
+        <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

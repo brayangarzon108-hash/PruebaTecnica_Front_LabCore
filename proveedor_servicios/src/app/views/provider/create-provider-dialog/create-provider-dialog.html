@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Crear Proveedor</h2>
+<mat-dialog-content [formGroup]="providerForm" class="form-grid">
+  <mat-form-field class="full-width">
+    <mat-label>NIT</mat-label>
+    <input matInput formControlName="TaxId" required />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="Name" required />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <mat-label>Correo electrónico</mat-label>
+    <input matInput formControlName="Email" required />
+  </mat-form-field>
+
+  <mat-slide-toggle formControlName="Enabled">Proveedor activo</mat-slide-toggle><BR>
+
+  <!-- Campos dinámicos -->
+  <h3>Campos personalizados</h3>
+  <br />
+  <button mat-stroked-button color="primary" (click)="addCustomField()">
+    <mat-icon>add</mat-icon> Añadir campo
+  </button>
+  <br />
+  <div formArrayName="dynamicFields">
+    <div
+      *ngFor="let field of dynamicFields.controls; let i = index"
+      [formGroupName]="i"
+      style="display: flex; gap: 5px; align-items: center"
+    >
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Nombre del campo</mat-label>
+        <input matInput formControlName="FieldName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Valor</mat-label>
+        <input matInput formControlName="FieldValue" />
+      </mat-form-field>
+
+      <mat-slide-toggle formControlName="Enabled">Activo</mat-slide-toggle>
+
+      <button mat-icon-button color="warn" (click)="removeCustomField(i)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+  <button mat-raised-button color="accent" (click)="save()">Guardar</button>
+</mat-dialog-actions>

@@ -1,0 +1,23 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columnas iguales */
+  gap: 16px;
+}
+
+.full-width {
+  grid-column: span 2; /* hace que el correo ocupe todo el ancho */
+}
+
+.success-snackbar {
+  background-color: #4caf50 !important; /* Verde */
+  color: white !important;
+  font-size: 18px !important; /* Más grande */
+  font-weight: bold;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important; /* Rojo */
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: bold;
+}
