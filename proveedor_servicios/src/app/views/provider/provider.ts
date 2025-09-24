@@ -12,8 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ApiResponse } from '../../models/application/api-response.model';
 import { CustomerOrders } from '../../services/base/customers.service';
-import { ProviderModel, UserFilter, ReportSummary } from '../../models/base/provider.model';
-import { Services } from '../services/services';
+import { PatienstModel, UserFilter, ReportSummary } from '../../models/base/provider.model';
 import { CreateProviderDialogComponent } from './create-provider-dialog/create-provider-dialog';
 import { AuthService } from '../../services/auth/auth.service';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -40,8 +39,16 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
   styleUrls: ['./provider.scss'],
 })
 export class Provider implements OnInit {
-  displayedColumns: string[] = ['expand', 'id', 'nit', 'name', 'email', 'actions'];
-  dataSource = new MatTableDataSource<ProviderModel>([]);
+  displayedColumns: string[] = [
+    'id',
+    'descdocument',
+    'document',
+    'name',
+    'lastname',
+    'email',
+    'actions',
+  ];
+  dataSource = new MatTableDataSource<PatienstModel>([]);
 
   summary?: ReportSummary;
 
@@ -57,22 +64,13 @@ export class Provider implements OnInit {
 
   searchTerm: string = '';
   handleLoading: boolean = false;
-row: any;
+  row: any;
 
   constructor(private customerService: CustomerOrders, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.getProvider('');
-    this.getDashboard();
+    this.getPatienst('');
   }
-
-  expandedElement: ProviderModel | null = null;
-
-  toggleRow(element: ProviderModel): void {
-    this.expandedElement = this.expandedElement === element ? null : element;
-  }
-
-  isExpansionDetailRow = (row: ProviderModel) => this.expandedElement === row;
 
   onSearch() {
     this.dataSource.filter = this.searchTerm.trim().toLowerCase();
@@ -81,13 +79,14 @@ row: any;
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
 
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    //this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.getPatienst(filterValue);
   }
 
-  getProvider(payload: string) {
+  getPatienst(payload: string) {
     this.handleLoading = true;
-    this.customerService.getProvider(payload).subscribe({
-      next: (response: ApiResponse<ProviderModel[]>) => {
+    this.customerService.getPatienst(payload).subscribe({
+      next: (response: ApiResponse<PatienstModel[]>) => {
         if (response.status === 200) {
           this.dataSource.data = response.data;
 
@@ -103,59 +102,16 @@ row: any;
     });
   }
 
-  getDashboard() {
-    this.handleLoading = true;
-    this.customerService.getDashboard().subscribe({
-      next: (response: ApiResponse<ReportSummary>) => {
-        if (response.status === 200) {
-          // Convertimos la data para ngx-charts
-          this.clientsChartData = response.data.clientsByCountry.map((c) => ({
-            name: c.countryName,
-            value: c.clientsCount,
-          }));
-
-          this.servicesChartData = response.data.servicesByCountry.map((s) => ({
-            name: s.countryName,
-            value: s.servicesCount,
-          }));
-        }
-      },
-      complete: () => {
-        this.handleLoading = false;
-      },
-    });
-  }
-
-  openOrdersDialog(customer: ProviderModel) {
-    this.dialog.open(Services, {
-      width: '100%',
-      height: '100%',
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      panelClass: 'full-screen-dialog',
-      data: { customerId: customer.providerId, customerName: customer.name },
-    });
-  }
-
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateProviderDialogComponent, {
       width: '1500px',
     });
-
+    //data: { customerId: customer.id, customerName: customer.name },
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('Proveedor creado:', result);
-        this.getProvider('');
-        // TODO: Llamar al servicio backend para guardar
-        // this.providerService.create(result).subscribe(...)
+        this.getPatienst('');
       }
     });
   }
-
-  //openNewOrdersDialog(customer: OrderPrediction) {
-  //this.dialog.open(NewOrderComponent, {
-  //width: '1500px',
-  //data: { customerId: customer.customerId, customerName: customer.customerName },
-  //});
-  //}
 }

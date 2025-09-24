@@ -1,4 +1,4 @@
-const HOST = 'https://localhost:7117/api';
+const HOST = 'https://localhost:44300/api';
 export const enviroments = {
   API_PUBLIC: HOST + '/',
   production: false,

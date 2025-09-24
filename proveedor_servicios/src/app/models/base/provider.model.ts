@@ -1,21 +1,19 @@
-export interface ProviderModel {
-  providerId: number;
-  taxId: string;
+export interface PatienstModel {
+  id: number;
+  typeDocument: number;
+  descDocument: string;
+  document: string;
   name: string;
+  lastName: string;
+  birthDate: string;
+  cityId: number;
+  phone: number;
   email: string;
   createdBy: string;
   createdDate: string;
   updatedBy: string;
   updatedDate: string;
   enabled: string;
-  customFields: ProviderCustomFieldResponse[]
-}
-
-export interface ProviderCustomFieldResponse {
-  customFieldId: number;
-  fieldName: string;
-  fieldValue: number;
-  enabled: boolean
 }
 
 export interface UserFilter {
@@ -24,21 +22,24 @@ export interface UserFilter {
 }
 
 export interface DynamicFieldRequest {
-  CustomFieldId?: number;           // opcional en caso de que aún no exista en BD
-  FieldName: string;          // nombre del campo     // tipo (text, number, date, etc.)
-  FieldValue?: any;           // valor actual
-  Enabled: boolean;      // switch: habilitado/deshabilitado
+  CustomFieldId?: number; // opcional en caso de que aún no exista en BD
+  FieldName: string; // nombre del campo     // tipo (text, number, date, etc.)
+  FieldValue?: any; // valor actual
+  Enabled: boolean; // switch: habilitado/deshabilitado
 }
 
-export interface ProviderRequest {
-  ProviderId?: number;
-  TaxId: string;
+export interface PatienstRequest {
+  Id?: number;
+  TypeDocument: number;
+  Document: string;
   Name: string;
+  LastName: string;
+  BirthDate: string;
+  CityId: number;
+  Phone: number;
   Email: string;
-  Enabled: boolean; // switch: proveedor habilitado/deshabilitado
-  dynamicFields: DynamicFieldRequest[];
+  Enabled: boolean; 
 }
-
 
 export interface ServicesRequest {
   ServiceId?: number;

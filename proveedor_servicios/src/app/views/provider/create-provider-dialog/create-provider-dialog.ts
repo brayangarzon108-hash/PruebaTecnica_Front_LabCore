@@ -14,12 +14,17 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { ProviderRequest, DynamicFieldRequest } from '../../../models/base/provider.model';
+import { PatienstRequest, DynamicFieldRequest } from '../../../models/base/provider.model';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiResponse } from '../../../models/application/api-response.model';
 import { CustomerOrders } from '../../../services/base/customers.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import Swal from 'sweetalert2';
+import { MatTreeNodePadding } from '@angular/material/tree';
 
 @Component({
   selector: 'app-create-provider-dialog',
@@ -42,49 +47,65 @@ import Swal from 'sweetalert2';
     FormsModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
+  providers: [
+    provideNativeDateAdapter(), // 👈 Esto resuelve tu error
   ],
 })
 export class CreateProviderDialogComponent {
-  providerForm: FormGroup;
+  providerForm!: FormGroup;
+  cities: any[] = [];
+  documentTypes = [
+    { valueId: 1, value: 'CC', viewValue: 'Cédula de Ciudadanía' },
+    { valueId: 2, value: 'CE', viewValue: 'Cédula de Extranjería' },
+    { valueId: 3, value: 'TI', viewValue: 'Tarjeta de Identidad' },
+    { valueId: 4, value: 'PP', viewValue: 'Pasaporte' },
+  ];
 
   constructor(
     private customerService: CustomerOrders,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CreateProviderDialogComponent>,
     private snackBar: MatSnackBar
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.providerForm = this.fb.group({
-      TaxId: ['', Validators.required],
+      TypeDocument: [null, Validators.required],
+      Document: ['', Validators.required],
       Name: ['', Validators.required],
-      Email: ['', [Validators.required, Validators.email]],
+      LastName: ['', Validators.required],
+      Phone: [0],
+      BirthDate: ['', Validators.required],
+      Email: [''],
       Enabled: [true],
-      dynamicFields: this.fb.array([]), // campos dinámicos
+      Cities: [[]],
     });
+
+    this.getCities();
   }
 
-  get dynamicFields(): FormArray {
-    return this.providerForm.get('dynamicFields') as FormArray;
-  }
-
-  addCustomField() {
-    this.dynamicFields.push(
-      this.fb.group({
-        FieldName: ['', Validators.required],
-        FieldValue: [''],
-        Enabled: [true],
-      })
-    );
-  }
-
-  removeCustomField(index: number) {
-    this.dynamicFields.removeAt(index);
+  getCities() {
+    this.customerService.getCities().subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.status === 200) {
+          this.cities = response.data;
+          console.log(response);
+        }
+      },
+      complete: () => {},
+    });
   }
 
   save() {
     if (this.providerForm.valid) {
-      const provider: ProviderRequest = this.providerForm.value;
+      const provider: PatienstRequest = this.providerForm.value;
 
-      this.customerService.upsertProvider(provider).subscribe({
+      this.customerService.upsertPatients(provider).subscribe({
         next: (response: ApiResponse<string>) => {
           if (response.status === 200) {
             Swal.fire({
@@ -117,6 +138,7 @@ export class CreateProviderDialogComponent {
         },
       });
     } else {
+      this.providerForm.markAllAsTouched();
       Swal.fire({
         icon: 'warning',
         title: 'Campos Obligatorios',

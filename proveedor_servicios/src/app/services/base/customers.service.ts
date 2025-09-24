@@ -5,8 +5,8 @@ import { EndPointRoute } from '../../application/endPoints/endPoint.enum';
 import { ApiResponse } from '../../models/application/api-response.model';
 import {
   UserFilter,
-  ProviderModel,
-  ProviderRequest,
+  PatienstModel,
+  PatienstRequest,
   ServicesRequest,
   ReportSummary
 } from '../../models/base/provider.model';
@@ -16,13 +16,13 @@ import { ServicesInfo } from '../../models/base/services.model';
 })
 export class CustomerOrders {
   constructor(private http: HttpClient) {}
-  // Provider List
-  getProvider(payload: string) {
+  // Patienst List
+  getPatienst(payload: string) {
     const token = sessionStorage.getItem('SESSION');
-    return this.http.get<ApiResponse<ProviderModel[]>>(
-      `${enviroments.API_PUBLIC}${EndPointRoute.PROVIDER}`,
+    return this.http.get<ApiResponse<PatienstModel[]>>(
+      `${enviroments.API_PUBLIC}${EndPointRoute.PATIENTS}`,
       {
-        params: { CustomerName: payload },
+        params: { document: payload },
         headers: {
           Authorization: 'Bearer ' + token,
         },
@@ -58,20 +58,20 @@ export class CustomerOrders {
   }
 
   // Country List
-  getCountries() {
+  getCities() {
     const token = sessionStorage.getItem('SESSION');
-    return this.http.get<ApiResponse<any>>(`${enviroments.API_PUBLIC}${EndPointRoute.COUNTRIES}`, {
+    return this.http.get<ApiResponse<any>>(`${enviroments.API_PUBLIC}${EndPointRoute.CITIES}`, {
       headers: {
         Authorization: 'Bearer ' + token,
       },
     });
   }
 
-  // Provider Creation
-  upsertProvider(payload: ProviderRequest) {
+  // Patients Creation
+  upsertPatients(payload: PatienstRequest) {
     const token = sessionStorage.getItem('SESSION');
     return this.http.post<ApiResponse<string>>(
-      `${enviroments.API_PUBLIC}${EndPointRoute.UPSERT_PROVIDER}`,
+      `${enviroments.API_PUBLIC}${EndPointRoute.UPSERT_PATIENTS}`,
       payload,
       {
         headers: {
