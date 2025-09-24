@@ -118,7 +118,6 @@ export class CreateProviderDialogComponent {
       next: (response: ApiResponse<any>) => {
         if (response.status === 200) {
           this.cities = response.data;
-          console.log(response);
         }
       },
       complete: () => {},
@@ -128,7 +127,10 @@ export class CreateProviderDialogComponent {
   save() {
     if (this.providerForm.valid) {
       const provider: PatienstRequest = this.providerForm.value;
-
+      if (this.data && this.data.dataInfo) {
+        provider.TypeDocument = this.data.dataInfo.typeDocument
+        provider.Document = this.data.dataInfo.document
+      }
       this.customerService.upsertPatients(provider).subscribe({
         next: (response: ApiResponse<string>) => {
           if (response.status === 200) {
