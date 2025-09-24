@@ -46,6 +46,7 @@ export class Provider implements OnInit {
     'name',
     'lastname',
     'email',
+    'phone',
     'actions',
   ];
   dataSource = new MatTableDataSource<PatienstModel>([]);
@@ -107,7 +108,7 @@ export class Provider implements OnInit {
   openCreateDialog(dataRow: PatienstModel | null, visibility: boolean) {
     const dialogRef = this.dialog.open(CreateProviderDialogComponent, {
       width: '1500px',
-      data: { customerId: dataRow, customerName: visibility },
+      data: { dataInfo: dataRow, visibility: visibility },
     });
     
     dialogRef.afterClosed().subscribe((result) => {

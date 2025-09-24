@@ -16,7 +16,7 @@
       >
         <!-- Botón Crear  -->
         <button mat-raised-button style="color: green" (click)="openCreateDialog(null, false)">
-          <mat-icon>add</mat-icon> Crear 
+          <mat-icon>add</mat-icon> Crear
         </button>
 
         <mat-form-field appearance="fill">
@@ -61,7 +61,7 @@
             <td mat-cell *matCellDef="let element">{{ element.name }}</td>
           </ng-container>
 
-           <!-- Apellido -->
+          <!-- Apellido -->
           <ng-container matColumnDef="lastname">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido</th>
             <td mat-cell *matCellDef="let element">{{ element.lastName }}</td>
@@ -73,12 +73,22 @@
             <td mat-cell *matCellDef="let element">{{ element.email }}</td>
           </ng-container>
 
+          <!-- Phone -->
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
+            <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
+          </ng-container>
+
           <!-- Acciones -->
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>
             <td mat-cell *matCellDef="let element">
-              <button mat-button (click)="openCreateDialog(element, true)" style="color: rgb(130, 238, 198)">
-                 Editar
+              <button
+                mat-button
+                (click)="openCreateDialog(element, true)"
+                style="color: rgb(130, 238, 198)"
+              >
+                Editar
               </button>
             </td>
           </ng-container>

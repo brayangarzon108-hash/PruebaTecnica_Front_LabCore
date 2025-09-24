@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 // Angular Material
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -25,6 +25,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { MatTreeNodePadding } from '@angular/material/tree';
+import { PatienstModel, UserFilter, ReportSummary } from '../../../models/base/provider.model';
 
 @Component({
   selector: 'app-create-provider-dialog',
@@ -71,23 +72,45 @@ export class CreateProviderDialogComponent {
     private customerService: CustomerOrders,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CreateProviderDialogComponent>,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: { dataInfo: PatienstModel | null; visibility: boolean }
   ) {}
 
   ngOnInit() {
     this.providerForm = this.fb.group({
-      TypeDocument: [null, Validators.required],
-      Document: ['', Validators.required],
+      Id: [0],
+      TypeDocument: [
+        { value: null, disabled: this.data.visibility ? true : false },
+        Validators.required,
+      ],
+      Document: [{ value: '', disabled: this.data.visibility ? true : false }, Validators.required],
       Name: ['', Validators.required],
       LastName: ['', Validators.required],
       Phone: [0],
       BirthDate: ['', Validators.required],
       Email: [''],
       Enabled: [true],
-      Cities: [null, Validators.required],
+      CityId: [null, Validators.required],
     });
 
     this.getCities();
+
+    if (this.data && this.data.dataInfo) {
+      this.modeModal = this.data.visibility;
+
+      this.providerForm.patchValue({
+        Id: this.data.dataInfo.id,
+        TypeDocument: this.data.dataInfo.typeDocument,
+        Document: this.data.dataInfo.document,
+        Name: this.data.dataInfo.name,
+        LastName: this.data.dataInfo.lastName,
+        Phone: this.data.dataInfo.phone,
+        BirthDate: this.data.dataInfo.birthDate,
+        Email: this.data.dataInfo.email,
+        Enabled: this.data.dataInfo.enabled,
+        CityId: this.data.dataInfo.cityId,
+      });
+    }
   }
 
   getCities() {
