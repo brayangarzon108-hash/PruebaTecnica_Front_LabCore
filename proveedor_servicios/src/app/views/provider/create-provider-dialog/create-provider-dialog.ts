@@ -59,6 +59,7 @@ import { MatTreeNodePadding } from '@angular/material/tree';
 export class CreateProviderDialogComponent {
   providerForm!: FormGroup;
   cities: any[] = [];
+  modeModal: boolean = false;
   documentTypes = [
     { valueId: 1, value: 'CC', viewValue: 'Cédula de Ciudadanía' },
     { valueId: 2, value: 'CE', viewValue: 'Cédula de Extranjería' },
@@ -83,7 +84,7 @@ export class CreateProviderDialogComponent {
       BirthDate: ['', Validators.required],
       Email: [''],
       Enabled: [true],
-      Cities: [[]],
+      Cities: [null, Validators.required],
     });
 
     this.getCities();
@@ -149,6 +150,7 @@ export class CreateProviderDialogComponent {
   }
 
   close() {
+    this.modeModal = false;
     this.dialogRef.close();
   }
 }

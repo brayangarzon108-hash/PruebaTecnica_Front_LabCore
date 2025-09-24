@@ -49,6 +49,8 @@ export class Provider implements OnInit {
     'actions',
   ];
   dataSource = new MatTableDataSource<PatienstModel>([]);
+  checked: boolean = false;
+  dataRow!: PatienstModel | null;
 
   summary?: ReportSummary;
 
@@ -102,11 +104,12 @@ export class Provider implements OnInit {
     });
   }
 
-  openCreateDialog() {
+  openCreateDialog(dataRow: PatienstModel | null, visibility: boolean) {
     const dialogRef = this.dialog.open(CreateProviderDialogComponent, {
       width: '1500px',
+      data: { customerId: dataRow, customerName: visibility },
     });
-    //data: { customerId: customer.id, customerName: customer.name },
+    
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('Proveedor creado:', result);
